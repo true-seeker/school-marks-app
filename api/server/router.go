@@ -24,10 +24,16 @@ func NewRouter() *gin.Engine {
 			teacherGroup.PATCH("/:id", teacher.Update)
 			teacherGroup.DELETE("/:id", teacher.Delete)
 		}
-		academicLeverGroup := api.Group("academicLevel")
+		academicLevelGroup := api.Group("academicLevel")
 		{
 			var academicLevel controllers.AcademicLeverController
-			academicLeverGroup.GET("", academicLevel.GetAll)
+			academicLevelGroup.GET("", academicLevel.GetAll)
+		}
+
+		schoolClassGroup := api.Group("schoolClass")
+		{
+			var schoolClass controllers.SchoolClassController
+			schoolClassGroup.GET("", schoolClass.GetAll)
 		}
 	}
 	return router
