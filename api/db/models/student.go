@@ -1,11 +1,13 @@
-package models
+package db
 
 import "gorm.io/gorm"
 
-// Teacher Учитель
-type Teacher struct {
+// Student Ученик
+type Student struct {
 	gorm.Model
 	Name       string `json:"name"`
 	Surname    string `json:"surname"`
 	Patronymic string `json:"patronymic"`
+	ClassID    int    `json:"class_id"`
+	Class      Class  `json:"class"`
 }

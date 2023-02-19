@@ -9,12 +9,8 @@ import (
 	errorHandler "school-marks-app/api/error"
 )
 
-type GormConnection struct {
-	conn gorm.DB
-}
-
 // GetDBConnection подключение к БД
-func GetDBConnection() GormConnection {
+func GetDBConnection() gorm.DB {
 	var PostgresConnectionString = fmt.Sprintf("host=%s "+
 		"user=%s "+
 		"password=%s "+
@@ -29,5 +25,5 @@ func GetDBConnection() GormConnection {
 
 	db, err := gorm.Open(postgres.Open(PostgresConnectionString), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)})
 	errorHandler.FailOnError(err, "Failed to connect to DB")
-	return GormConnection{conn: *db}
+	return *db
 }

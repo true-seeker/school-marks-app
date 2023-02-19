@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"school-marks-app/api/config"
-	"school-marks-app/api/db"
+	"school-marks-app/api/migration"
 	"school-marks-app/api/server"
 )
 
@@ -19,7 +19,7 @@ func main() {
 
 	config.Init(*environment)
 
-	db.Migrate()
-	db.CreateCatalogs()
+	migration.Migrate()
+	migration.CreateCatalogs()
 	server.Init()
 }

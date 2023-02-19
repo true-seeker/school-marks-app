@@ -16,12 +16,14 @@ func NewRouter() *gin.Engine {
 
 	v1 := router.Group("api")
 	{
-		userGroup := v1.Group("user")
+		teacherGroup := v1.Group("teacher")
 		{
-			user := new(controllers.UserController)
-			userGroup.GET("/:id", user.Retrieve)
+			teacher := new(controllers.TeacherController)
+			teacherGroup.GET("/:id", teacher.Get)
+			teacherGroup.POST("", teacher.Create)
+			teacherGroup.PATCH("/:id", teacher.Update)
+			teacherGroup.DELETE("/:id", teacher.Delete)
 		}
 	}
 	return router
-
 }

@@ -1,4 +1,4 @@
-package models
+package db
 
 // SchoolClass Параллель
 type SchoolClass struct {

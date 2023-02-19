@@ -1,4 +1,4 @@
-package models
+package db
 
 // AcademicLevel Академический уровень (нач, ср, старш школа)
 type AcademicLevel struct {
