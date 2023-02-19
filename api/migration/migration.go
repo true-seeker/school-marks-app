@@ -25,20 +25,20 @@ func CreateCatalogs() {
 	var level db2.AcademicLevel
 	if err := db.Where("title = ?", "Начальная школа").First(&level).Error; err != nil {
 		db.Create(&db2.AcademicLevel{
-			ID:    0,
+			ID:    1,
 			Title: "Начальная школа",
 		})
 	}
 	if err := db.Where("title = ?", "Средняя школа").First(&level).Error; err != nil {
 		db.Create(&db2.AcademicLevel{
-			ID:    1,
+			ID:    2,
 			Title: "Средняя школа",
 		})
 	}
 
 	if err := db.Where("title = ?", "Старшая школа").First(&level).Error; err != nil {
 		db.Create(&db2.AcademicLevel{
-			ID:    2,
+			ID:    3,
 			Title: "Старшая школа",
 		})
 	}
