@@ -42,7 +42,7 @@ func (t TeacherController) Create(c *gin.Context) {
 		return
 	}
 
-	newTeacher, webErr := teacher.Create(teacher)
+	newTeacher, webErr := teacher.Create()
 	if webErr != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": webErr.Err.Error()})
 		return
@@ -74,7 +74,7 @@ func (t TeacherController) Update(c *gin.Context) {
 		return
 	}
 
-	newTeacher, webErr := teacher.Update(teacher)
+	newTeacher, webErr := teacher.Update()
 	if webErr != nil {
 		c.AbortWithStatusJSON(webErr.Code, gin.H{"message": webErr.Err.Error()})
 		return

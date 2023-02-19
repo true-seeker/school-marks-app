@@ -85,14 +85,9 @@ func (a AcademicYear) Update() (*AcademicYear, *error2.WebError) {
 	dbInstance, _ := dbConnection.DB()
 	defer dbInstance.Close()
 
-	oldAcademicYear := AcademicYear{}
-
-	dbConnection.First(&oldAcademicYear, a.ID)
-	if oldAcademicYear.ID == 0 {
-		return nil, &error2.WebError{
-			Err:  errors.New(fmt.Sprintf("academicYear with id %d does not exist", a.ID)),
-			Code: http.StatusNotFound,
-		}
+	oldAcademicYear, webErr := a.Get(a.ID)
+	if webErr != nil {
+		return nil, webErr
 	}
 
 	a.CreatedAt = oldAcademicYear.CreatedAt
@@ -105,14 +100,9 @@ func (a AcademicYear) Delete(id uint) *error2.WebError {
 	dbInstance, _ := dbConnection.DB()
 	defer dbInstance.Close()
 
-	academicYear := AcademicYear{}
-
-	dbConnection.First(&academicYear, id)
-	if academicYear.ID == 0 {
-		return &error2.WebError{
-			Err:  errors.New(fmt.Sprintf("academicYear with id %d does not exist", id)),
-			Code: http.StatusNotFound,
-		}
+	academicYear, webErr := a.Get(id)
+	if webErr != nil {
+		return webErr
 	}
 
 	dbConnection.Delete(&academicYear, id)

@@ -35,33 +35,28 @@ func (t Teacher) Get(id uint) (*Teacher, *error2.WebError) {
 	return &teacher, nil
 }
 
-func (t Teacher) Create(teacher Teacher) (*Teacher, *error2.WebError) {
+func (t Teacher) Create() (*Teacher, *error2.WebError) {
 	dbConnection := db.GetDBConnection()
 	dbInstance, _ := dbConnection.DB()
 	defer dbInstance.Close()
 
-	dbConnection.Create(&teacher)
-	return &teacher, nil
+	dbConnection.Create(&t)
+	return &t, nil
 }
 
-func (t Teacher) Update(teacher Teacher) (*Teacher, *error2.WebError) {
+func (t Teacher) Update() (*Teacher, *error2.WebError) {
 	dbConnection := db.GetDBConnection()
 	dbInstance, _ := dbConnection.DB()
 	defer dbInstance.Close()
 
-	oldTeacher := Teacher{}
-
-	dbConnection.First(&oldTeacher, teacher.ID)
-	if oldTeacher.ID == 0 {
-		return nil, &error2.WebError{
-			Err:  errors.New(fmt.Sprintf("teacher with id %d does not exist", teacher.ID)),
-			Code: http.StatusNotFound,
-		}
+	oldTeacher, webErr := t.Get(t.ID)
+	if webErr != nil {
+		return nil, webErr
 	}
 
-	teacher.CreatedAt = oldTeacher.CreatedAt
-	dbConnection.Save(&teacher)
-	return &teacher, nil
+	t.CreatedAt = oldTeacher.CreatedAt
+	dbConnection.Save(&t)
+	return &t, nil
 }
 
 func (t Teacher) Delete(id uint) *error2.WebError {
@@ -69,14 +64,9 @@ func (t Teacher) Delete(id uint) *error2.WebError {
 	dbInstance, _ := dbConnection.DB()
 	defer dbInstance.Close()
 
-	teacher := Teacher{}
-
-	dbConnection.First(&teacher, id)
-	if teacher.ID == 0 {
-		return &error2.WebError{
-			Err:  errors.New(fmt.Sprintf("teacher with id %d does not exist", id)),
-			Code: http.StatusNotFound,
-		}
+	teacher, webErr := t.Get(id)
+	if webErr != nil {
+		return webErr
 	}
 
 	dbConnection.Delete(&teacher, id)
