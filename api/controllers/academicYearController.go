@@ -5,25 +5,18 @@ import (
 	"net/http"
 	db2 "school-marks-app/api/db/models"
 	"school-marks-app/api/db/models/validators"
-	"strconv"
 )
 
 type AcademicYearController struct{}
 
 func (a AcademicYearController) Get(c *gin.Context) {
 	var academicYearModel db2.AcademicYear
-	if c.Param("id") == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Missing field \"id\""})
-		return
-	}
-
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := validators.ValidateAndReturnId(c, c.Param("id"))
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Field id must be integer"})
 		return
 	}
 
-	class, webErr := academicYearModel.Get(uint(id))
+	class, webErr := academicYearModel.Get(id)
 
 	if webErr != nil {
 		c.AbortWithStatusJSON(webErr.Code, gin.H{"message": webErr.Err.Error()})
@@ -56,21 +49,17 @@ func (a AcademicYearController) Create(c *gin.Context) {
 
 func (a AcademicYearController) Update(c *gin.Context) {
 	var academicYear db2.AcademicYear
-	if c.Param("id") == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Missing field \"id\""})
+	id, err := validators.ValidateAndReturnId(c, c.Param("id"))
+	if err != nil {
 		return
 	}
+
 	if validationErr := c.BindJSON(&academicYear); validationErr != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "application/json data is required"})
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Field id must be integer"})
-		return
-	}
-	academicYear.ID = uint(id)
+	academicYear.ID = id
 
 	if validationErr := validators.ValidateAcademicYearUpdate(academicYear); validationErr != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": validationErr.Error()})
@@ -88,18 +77,12 @@ func (a AcademicYearController) Update(c *gin.Context) {
 
 func (a AcademicYearController) Delete(c *gin.Context) {
 	var academicYear db2.AcademicYear
-	if c.Param("id") == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Missing field \"id\""})
-		return
-	}
-
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := validators.ValidateAndReturnId(c, c.Param("id"))
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Field id must be integer"})
 		return
 	}
 
-	webErr := academicYear.Delete(uint(id))
+	webErr := academicYear.Delete(id)
 	if webErr != nil {
 		c.AbortWithStatusJSON(webErr.Code, gin.H{"message": webErr.Err.Error()})
 		return
