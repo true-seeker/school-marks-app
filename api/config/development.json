@@ -1,1 +1,9 @@
-{}
+{
+  "database": {
+    "address": "",
+    "user": "",
+    "password": "",
+    "dbname": "",
+    "port": ""
+  }
+}
