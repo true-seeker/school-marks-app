@@ -6,9 +6,9 @@ import (
 	db2 "school-marks-app/api/db/models"
 )
 
-type AcademicLeverController struct{}
+type AcademicLevelController struct{}
 
-func (a AcademicLeverController) GetAll(c *gin.Context) {
+func (a AcademicLevelController) GetAll(c *gin.Context) {
 	var academicLeveModel db2.AcademicLevel
 
 	academicLevels, webErr := academicLeveModel.Get()

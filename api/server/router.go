@@ -26,7 +26,7 @@ func NewRouter() *gin.Engine {
 		}
 		academicLevelGroup := api.Group("academicLevel")
 		{
-			var academicLevel controllers.AcademicLeverController
+			var academicLevel controllers.AcademicLevelController
 			academicLevelGroup.GET("", academicLevel.GetAll)
 		}
 
@@ -34,6 +34,15 @@ func NewRouter() *gin.Engine {
 		{
 			var schoolClass controllers.SchoolClassController
 			schoolClassGroup.GET("", schoolClass.GetAll)
+		}
+
+		academicYearGroup := api.Group("academicYear")
+		{
+			var academicYear controllers.AcademicYearController
+			academicYearGroup.GET("/:id", academicYear.Get)
+			academicYearGroup.POST("", academicYear.Create)
+			academicYearGroup.PATCH("/:id", academicYear.Update)
+			academicYearGroup.DELETE("/:id", academicYear.Delete)
 		}
 	}
 	return router
