@@ -14,15 +14,20 @@ func NewRouter() *gin.Engine {
 
 	router.GET("/health", health.Status)
 
-	v1 := router.Group("api")
+	api := router.Group("api")
 	{
-		teacherGroup := v1.Group("teacher")
+		teacherGroup := api.Group("teacher")
 		{
-			teacher := new(controllers.TeacherController)
+			var teacher = new(controllers.TeacherController)
 			teacherGroup.GET("/:id", teacher.Get)
 			teacherGroup.POST("", teacher.Create)
 			teacherGroup.PATCH("/:id", teacher.Update)
 			teacherGroup.DELETE("/:id", teacher.Delete)
+		}
+		academicLeverGroup := api.Group("academicLevel")
+		{
+			var academicLevel controllers.AcademicLeverController
+			academicLeverGroup.GET("", academicLevel.GetAll)
 		}
 	}
 	return router

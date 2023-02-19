@@ -27,7 +27,7 @@ func (t TeacherController) Get(c *gin.Context) {
 		c.AbortWithStatusJSON(webErr.Code, gin.H{"message": webErr.Err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"teacher": teacher})
+	c.JSON(http.StatusOK, teacher)
 	return
 }
 
