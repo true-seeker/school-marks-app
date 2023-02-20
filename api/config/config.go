@@ -15,6 +15,7 @@ func Init(env string) {
 	config.SetConfigType("json")
 	config.SetConfigName(env)
 	config.AddConfigPath("api/config/")
+	config.AddConfigPath("config/")
 	err = config.ReadInConfig()
 	if err != nil {
 		log.Fatal("error on parsing configuration file", err)
