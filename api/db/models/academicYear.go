@@ -12,7 +12,8 @@ import (
 // AcademicYear Академический год
 type AcademicYear struct {
 	gorm.Model
-	Year string `json:"year"`
+	ParentId uint   `json:"parent_id"`
+	Year     string `json:"year"`
 }
 
 func (a AcademicYear) Get(id uint) (*AcademicYear, *error2.WebError) {

@@ -5,6 +5,7 @@ import "gorm.io/gorm"
 // Class Класс
 type Class struct {
 	gorm.Model
+	ParentId  uint          `json:"parent_id"`
 	TeacherID int           `json:"teacher_id"`
 	Teacher   Teacher       `json:"teacher"`
 	LevelID   int           `json:"level_id"`
