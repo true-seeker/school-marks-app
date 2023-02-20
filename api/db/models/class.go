@@ -75,16 +75,22 @@ func (c Class) Create() (*Class, *error2.WebError) {
 
 func (c Class) Update() (*Class, *error2.WebError) {
 	dbConnection := db.GetDB()
-
-	webErr := ValidateClassExistingEntities(c)
+	oldClass, webErr := c.GetById(c.ID)
 	if webErr != nil {
 		return nil, webErr
 	}
 
-	oldClass, _ := c.GetById(c.ID)
+	webErr = ValidateClassExistingEntities(c)
+	if webErr != nil {
+		return nil, webErr
+	}
 
-	c.CreatedAt = oldClass.CreatedAt
-	dbConnection.Save(&c)
+	c.ParentId = oldClass.ID
+	c.ID = 0
+	dbConnection.Delete(&oldClass, oldClass.ID)
+	dbConnection.Create(&c)
+	dbConnection.Model(&Student{}).Where("class_id = ?", c.ParentId).Update("class_id", c.ID)
+
 	dbConnection.Preload(clause.Associations).Find(&c)
 
 	return &c, nil

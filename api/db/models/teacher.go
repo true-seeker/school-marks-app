@@ -49,8 +49,12 @@ func (t Teacher) Update() (*Teacher, *error2.WebError) {
 		return nil, webErr
 	}
 
-	t.CreatedAt = oldTeacher.CreatedAt
-	dbConnection.Save(&t)
+	t.ParentId = oldTeacher.ID
+	t.ID = 0
+
+	dbConnection.Delete(&oldTeacher, oldTeacher.ID)
+	dbConnection.Create(&t)
+	dbConnection.Model(&Class{}).Where("teacher_id = ?", t.ParentId).Update("teacher_id", t.ID)
 	return &t, nil
 }
 

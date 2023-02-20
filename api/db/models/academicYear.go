@@ -81,9 +81,12 @@ func (a AcademicYear) Update() (*AcademicYear, *error2.WebError) {
 	if webErr != nil {
 		return nil, webErr
 	}
+	a.ParentId = oldAcademicYear.ID
+	a.ID = 0
 
-	a.CreatedAt = oldAcademicYear.CreatedAt
-	dbConnection.Save(&a)
+	dbConnection.Delete(&oldAcademicYear, oldAcademicYear.ID)
+	dbConnection.Create(&a)
+	dbConnection.Model(&Class{}).Where("year_id = ?", a.ParentId).Update("year_id", a.ID)
 	return &a, nil
 }
 
