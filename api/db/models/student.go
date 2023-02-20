@@ -9,6 +9,6 @@ type Student struct {
 	Name       string `json:"name"`
 	Surname    string `json:"surname"`
 	Patronymic string `json:"patronymic"`
-	ClassID    int    `json:"class_id"`
+	ClassID    uint   `json:"class_id"`
 	Class      Class  `json:"class"`
 }

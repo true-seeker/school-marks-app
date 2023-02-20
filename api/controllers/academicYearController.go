@@ -9,14 +9,14 @@ import (
 
 type AcademicYearController struct{}
 
-func (a AcademicYearController) Get(c *gin.Context) {
+func (a AcademicYearController) GetById(c *gin.Context) {
 	var academicYearModel db2.AcademicYear
 	id, err := validators.ValidateAndReturnId(c, c.Param("id"))
 	if err != nil {
 		return
 	}
 
-	class, webErr := academicYearModel.Get(id)
+	class, webErr := academicYearModel.GetById(id)
 
 	if webErr != nil {
 		c.AbortWithStatusJSON(webErr.Code, gin.H{"message": webErr.Err.Error()})

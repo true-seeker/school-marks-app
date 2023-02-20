@@ -16,7 +16,7 @@ type AcademicYear struct {
 	Year     string `json:"year"`
 }
 
-func (a AcademicYear) Get(id uint) (*AcademicYear, *error2.WebError) {
+func (a AcademicYear) GetById(id uint) (*AcademicYear, *error2.WebError) {
 	dbConnection := db.GetDB()
 
 	academicYear := AcademicYear{}
@@ -77,7 +77,7 @@ func (a AcademicYear) Create() (*AcademicYear, *error2.WebError) {
 func (a AcademicYear) Update() (*AcademicYear, *error2.WebError) {
 	dbConnection := db.GetDB()
 
-	oldAcademicYear, webErr := a.Get(a.ID)
+	oldAcademicYear, webErr := a.GetById(a.ID)
 	if webErr != nil {
 		return nil, webErr
 	}
@@ -90,7 +90,7 @@ func (a AcademicYear) Update() (*AcademicYear, *error2.WebError) {
 func (a AcademicYear) Delete(id uint) *error2.WebError {
 	dbConnection := db.GetDB()
 
-	academicYear, webErr := a.Get(id)
+	academicYear, webErr := a.GetById(id)
 	if webErr != nil {
 		return webErr
 	}

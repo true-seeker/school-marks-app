@@ -8,7 +8,7 @@ import (
 
 type SchoolClassController struct{}
 
-func (s SchoolClassController) GetAll(c *gin.Context) {
+func (s SchoolClassController) Get(c *gin.Context) {
 	var schoolClassModel db2.SchoolClass
 
 	schoolClasses, webErr := schoolClassModel.Get()

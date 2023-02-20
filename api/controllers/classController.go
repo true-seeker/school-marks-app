@@ -3,40 +3,42 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	db "school-marks-app/api/db/models"
+	db2 "school-marks-app/api/db/models"
 	"school-marks-app/api/db/models/validators"
 )
 
-type TeacherController struct{}
+type ClassController struct{}
 
-func (t TeacherController) GetById(c *gin.Context) {
-	var teacherModel db.Teacher
+func (cl ClassController) GetById(c *gin.Context) {
+	var classControllerModel db2.Class
 	id, err := validators.ValidateAndReturnId(c, c.Param("id"))
 	if err != nil {
 		return
 	}
 
-	teacher, webErr := teacherModel.GetById(id)
+	class, webErr := classControllerModel.GetById(id)
+
 	if webErr != nil {
 		c.AbortWithStatusJSON(webErr.Code, gin.H{"message": webErr.Err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, teacher)
+	c.JSON(http.StatusOK, class)
 	return
 }
 
-func (t TeacherController) Create(c *gin.Context) {
-	var teacher db.Teacher
-	if validationErr := c.BindJSON(&teacher); validationErr != nil {
+func (cl ClassController) Create(c *gin.Context) {
+	var class db2.Class
+
+	if validationErr := c.BindJSON(&class); validationErr != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "application/json data is required"})
 		return
 	}
-	if validationErr := validators.ValidateTeacherCreate(teacher); validationErr != nil {
+	if validationErr := validators.ValidateClassCreate(class); validationErr != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": validationErr.Error()})
 		return
 	}
 
-	newTeacher, webErr := teacher.Create()
+	newTeacher, webErr := class.Create()
 	if webErr != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": webErr.Err.Error()})
 		return
@@ -45,26 +47,27 @@ func (t TeacherController) Create(c *gin.Context) {
 	c.JSON(http.StatusOK, newTeacher)
 }
 
-func (t TeacherController) Update(c *gin.Context) {
-	var teacher db.Teacher
+func (cl ClassController) Update(c *gin.Context) {
+	var class db2.Class
+
 	id, err := validators.ValidateAndReturnId(c, c.Param("id"))
 	if err != nil {
 		return
 	}
 
-	if validationErr := c.BindJSON(&teacher); validationErr != nil {
+	if validationErr := c.BindJSON(&class); validationErr != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "application/json data is required"})
 		return
 	}
 
-	teacher.ID = id
+	class.ID = id
 
-	if validationErr := validators.ValidateTeacherUpdate(teacher); validationErr != nil {
+	if validationErr := validators.ValidateClassUpdate(class); validationErr != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": validationErr.Error()})
 		return
 	}
 
-	newTeacher, webErr := teacher.Update()
+	newTeacher, webErr := class.Update()
 	if webErr != nil {
 		c.AbortWithStatusJSON(webErr.Code, gin.H{"message": webErr.Err.Error()})
 		return
@@ -73,14 +76,14 @@ func (t TeacherController) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, newTeacher)
 }
 
-func (t TeacherController) Delete(c *gin.Context) {
-	var teacher db.Teacher
+func (cl ClassController) Delete(c *gin.Context) {
+	var class db2.Class
 	id, err := validators.ValidateAndReturnId(c, c.Param("id"))
 	if err != nil {
 		return
 	}
 
-	webErr := teacher.Delete(id)
+	webErr := class.Delete(id)
 	if webErr != nil {
 		c.AbortWithStatusJSON(webErr.Code, gin.H{"message": webErr.Err.Error()})
 		return

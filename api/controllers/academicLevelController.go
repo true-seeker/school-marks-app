@@ -8,7 +8,7 @@ import (
 
 type AcademicLevelController struct{}
 
-func (a AcademicLevelController) GetAll(c *gin.Context) {
+func (a AcademicLevelController) Get(c *gin.Context) {
 	var academicLeveModel db2.AcademicLevel
 
 	academicLevels, webErr := academicLeveModel.Get()
