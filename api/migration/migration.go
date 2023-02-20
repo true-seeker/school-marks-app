@@ -8,36 +8,32 @@ import (
 )
 
 func Migrate() {
-	db := db3.GetDBConnection()
-	dbInstance, _ := db.DB()
-	defer dbInstance.Close()
+	dbConnection := db3.GetDB()
 
-	err := db.AutoMigrate(&db2.AcademicLevel{}, &db2.AcademicYear{}, &db2.Class{}, &db2.SchoolClass{}, &db2.Student{}, &db2.Teacher{})
+	err := dbConnection.AutoMigrate(&db2.AcademicLevel{}, &db2.AcademicYear{}, &db2.Class{}, &db2.SchoolClass{}, &db2.Student{}, &db2.Teacher{})
 	errorHandler.FailOnError(err, "Failed to migrate")
 
 }
 
 func CreateCatalogs() {
-	db := db3.GetDBConnection()
-	dbInstance, _ := db.DB()
-	defer dbInstance.Close()
+	dbConnection := db3.GetDB()
 
 	var level db2.AcademicLevel
-	if err := db.Where("title = ?", "Начальная школа").First(&level).Error; err != nil {
-		db.Create(&db2.AcademicLevel{
+	if err := dbConnection.Where("title = ?", "Начальная школа").First(&level).Error; err != nil {
+		dbConnection.Create(&db2.AcademicLevel{
 			ID:    1,
 			Title: "Начальная школа",
 		})
 	}
-	if err := db.Where("title = ?", "Средняя школа").First(&level).Error; err != nil {
-		db.Create(&db2.AcademicLevel{
+	if err := dbConnection.Where("title = ?", "Средняя школа").First(&level).Error; err != nil {
+		dbConnection.Create(&db2.AcademicLevel{
 			ID:    2,
 			Title: "Средняя школа",
 		})
 	}
 
-	if err := db.Where("title = ?", "Старшая школа").First(&level).Error; err != nil {
-		db.Create(&db2.AcademicLevel{
+	if err := dbConnection.Where("title = ?", "Старшая школа").First(&level).Error; err != nil {
+		dbConnection.Create(&db2.AcademicLevel{
 			ID:    3,
 			Title: "Старшая школа",
 		})
@@ -45,8 +41,8 @@ func CreateCatalogs() {
 
 	var class db2.SchoolClass
 	for i := 0; i < 11; i++ {
-		if err := db.Where("title = ?", fmt.Sprintf("%d", i+1)).First(&class).Error; err != nil {
-			db.Create(&db2.SchoolClass{
+		if err := dbConnection.Where("title = ?", fmt.Sprintf("%d", i+1)).First(&class).Error; err != nil {
+			dbConnection.Create(&db2.SchoolClass{
 				ID:    uint(i),
 				Title: fmt.Sprintf("%d", i+1),
 			})

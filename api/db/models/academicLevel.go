@@ -12,9 +12,7 @@ type AcademicLevel struct {
 }
 
 func (a AcademicLevel) Get() (*[]AcademicLevel, *error2.WebError) {
-	dbConnection := db.GetDBConnection()
-	dbInstance, _ := dbConnection.DB()
-	defer dbInstance.Close()
+	dbConnection := db.GetDB()
 
 	var academicLevels []AcademicLevel
 

@@ -18,9 +18,7 @@ type Teacher struct {
 }
 
 func (t Teacher) Get(id uint) (*Teacher, *error2.WebError) {
-	dbConnection := db.GetDBConnection()
-	dbInstance, _ := dbConnection.DB()
-	defer dbInstance.Close()
+	dbConnection := db.GetDB()
 
 	teacher := Teacher{}
 
@@ -36,18 +34,14 @@ func (t Teacher) Get(id uint) (*Teacher, *error2.WebError) {
 }
 
 func (t Teacher) Create() (*Teacher, *error2.WebError) {
-	dbConnection := db.GetDBConnection()
-	dbInstance, _ := dbConnection.DB()
-	defer dbInstance.Close()
+	dbConnection := db.GetDB()
 
 	dbConnection.Create(&t)
 	return &t, nil
 }
 
 func (t Teacher) Update() (*Teacher, *error2.WebError) {
-	dbConnection := db.GetDBConnection()
-	dbInstance, _ := dbConnection.DB()
-	defer dbInstance.Close()
+	dbConnection := db.GetDB()
 
 	oldTeacher, webErr := t.Get(t.ID)
 	if webErr != nil {
@@ -60,9 +54,7 @@ func (t Teacher) Update() (*Teacher, *error2.WebError) {
 }
 
 func (t Teacher) Delete(id uint) *error2.WebError {
-	dbConnection := db.GetDBConnection()
-	dbInstance, _ := dbConnection.DB()
-	defer dbInstance.Close()
+	dbConnection := db.GetDB()
 
 	teacher, webErr := t.Get(id)
 	if webErr != nil {

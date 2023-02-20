@@ -10,10 +10,6 @@ func NewRouter() *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
-	health := new(controllers.HealthController)
-
-	router.GET("/health", health.Status)
-
 	api := router.Group("api")
 	{
 		teacherGroup := api.Group("teacher")

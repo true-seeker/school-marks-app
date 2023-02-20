@@ -16,9 +16,7 @@ type AcademicYear struct {
 }
 
 func (a AcademicYear) Get(id uint) (*AcademicYear, *error2.WebError) {
-	dbConnection := db.GetDBConnection()
-	dbInstance, _ := dbConnection.DB()
-	defer dbInstance.Close()
+	dbConnection := db.GetDB()
 
 	academicYear := AcademicYear{}
 
@@ -34,9 +32,7 @@ func (a AcademicYear) Get(id uint) (*AcademicYear, *error2.WebError) {
 }
 
 func (a AcademicYear) isExistsWithYear() bool {
-	dbConnection := db.GetDBConnection()
-	dbInstance, _ := dbConnection.DB()
-	defer dbInstance.Close()
+	dbConnection := db.GetDB()
 
 	var academicYear AcademicYear
 
@@ -50,9 +46,7 @@ func (a AcademicYear) isExistsWithYear() bool {
 }
 
 func (a AcademicYear) isExistsWithId() bool {
-	dbConnection := db.GetDBConnection()
-	dbInstance, _ := dbConnection.DB()
-	defer dbInstance.Close()
+	dbConnection := db.GetDB()
 
 	var academicYear AcademicYear
 
@@ -66,9 +60,8 @@ func (a AcademicYear) isExistsWithId() bool {
 }
 
 func (a AcademicYear) Create() (*AcademicYear, *error2.WebError) {
-	dbConnection := db.GetDBConnection()
-	dbInstance, _ := dbConnection.DB()
-	defer dbInstance.Close()
+	dbConnection := db.GetDB()
+
 	if a.isExistsWithYear() {
 		return nil, &error2.WebError{
 			Err:  errors.New(fmt.Sprintf("academicYear with year %s already exists", a.Year)),
@@ -81,9 +74,7 @@ func (a AcademicYear) Create() (*AcademicYear, *error2.WebError) {
 }
 
 func (a AcademicYear) Update() (*AcademicYear, *error2.WebError) {
-	dbConnection := db.GetDBConnection()
-	dbInstance, _ := dbConnection.DB()
-	defer dbInstance.Close()
+	dbConnection := db.GetDB()
 
 	oldAcademicYear, webErr := a.Get(a.ID)
 	if webErr != nil {
@@ -96,9 +87,7 @@ func (a AcademicYear) Update() (*AcademicYear, *error2.WebError) {
 }
 
 func (a AcademicYear) Delete(id uint) *error2.WebError {
-	dbConnection := db.GetDBConnection()
-	dbInstance, _ := dbConnection.DB()
-	defer dbInstance.Close()
+	dbConnection := db.GetDB()
 
 	academicYear, webErr := a.Get(id)
 	if webErr != nil {

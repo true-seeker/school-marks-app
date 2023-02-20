@@ -12,9 +12,7 @@ type SchoolClass struct {
 }
 
 func (a SchoolClass) Get() (*[]SchoolClass, *error2.WebError) {
-	dbConnection := db.GetDBConnection()
-	dbInstance, _ := dbConnection.DB()
-	defer dbInstance.Close()
+	dbConnection := db.GetDB()
 
 	var schoolClasses []SchoolClass
 
