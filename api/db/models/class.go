@@ -13,19 +13,19 @@ import (
 // Class Класс
 type Class struct {
 	gorm.Model
-	ParentId  uint          `json:"parent_id"`
-	TeacherID uint          `json:"teacher_id"`
-	Teacher   Teacher       `json:"teacher"`
-	LevelID   uint          `json:"level_id"`
-	Level     AcademicLevel `json:"level"`
-	YearID    uint          `json:"year_id"`
-	Year      AcademicYear  `json:"year"`
+	ParentId      uint         `json:"parent_id"`
+	TeacherID     uint         `json:"teacher_id"`
+	Teacher       Teacher      `json:"teacher"`
+	SchoolClassId uint         `json:"school_class_id"`
+	SchoolClass   SchoolClass  `json:"school_class"`
+	YearID        uint         `json:"year_id"`
+	Year          AcademicYear `json:"year"`
 }
 
 func ValidateClassExistingEntities(class Class) *error2.WebError {
 	var teacherModel Teacher
 	var yearModel AcademicYear
-	var levelModel AcademicLevel
+	var schoolClassModel SchoolClass
 
 	if _, webErr := teacherModel.GetById(class.TeacherID); webErr != nil {
 		return webErr
@@ -35,7 +35,7 @@ func ValidateClassExistingEntities(class Class) *error2.WebError {
 		return webErr
 	}
 
-	if _, webErr := levelModel.GetById(class.LevelID); webErr != nil {
+	if _, webErr := schoolClassModel.GetById(class.SchoolClassId); webErr != nil {
 		return webErr
 	}
 	return nil

@@ -91,3 +91,7 @@ func (cl ClassController) Delete(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{})
 }
+
+func (cl ClassController) BulkCreate(c *gin.Context) {
+
+}

@@ -9,8 +9,8 @@ func ValidateClassCreate(class db.Class) error {
 	if class.TeacherID == 0 {
 		return errors.New("field teacher_id is missing")
 	}
-	if class.LevelID == 0 {
-		return errors.New("field level_id is missing")
+	if class.SchoolClassId == 0 {
+		return errors.New("field school_class_id is missing")
 	}
 	if class.YearID == 0 {
 		return errors.New("field year_id is missing")
