@@ -57,7 +57,7 @@ func NewRouter() *gin.Engine {
 			studentGroup.POST("", student.Create)
 			studentGroup.PATCH("/:id", student.Update)
 			studentGroup.DELETE("/:id", student.Delete)
-
+			studentGroup.POST("/bulkCreate", student.BulkCreate)
 		}
 	}
 	return router

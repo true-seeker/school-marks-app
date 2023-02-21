@@ -21,7 +21,7 @@ type Student struct {
 	Class      Class  `json:"class"`
 }
 
-func ValidateStudentExistingEntities(student Student) *error2.WebError {
+func ValidateClassExists(student Student) *error2.WebError {
 	var classModel Class
 
 	if _, webErr := classModel.GetById(student.ClassID); webErr != nil {
@@ -49,7 +49,7 @@ func (s Student) GetById(id uint) (*Student, *error2.WebError) {
 func (s Student) Create() (*Student, *error2.WebError) {
 	dbConnection := db.GetDB()
 
-	if webErr := ValidateStudentExistingEntities(s); webErr != nil {
+	if webErr := ValidateClassExists(s); webErr != nil {
 		return nil, webErr
 	}
 
@@ -67,7 +67,7 @@ func (s Student) Update() (*Student, *error2.WebError) {
 		return nil, webErr
 	}
 
-	if webErr = ValidateStudentExistingEntities(s); webErr != nil {
+	if webErr = ValidateClassExists(s); webErr != nil {
 		return nil, webErr
 	}
 
@@ -91,4 +91,32 @@ func (s Student) Delete(id uint) *error2.WebError {
 	dbConnection.Delete(&teacher, id)
 
 	return nil
+}
+
+func (s Student) BulkCreate(students []Student) ([]uint, *error2.WebError) {
+	validatedClassIds := make(map[uint]bool)
+	var newIds []uint
+	dbConnection := db.GetDB()
+
+	err := dbConnection.Transaction(func(tx *gorm.DB) error {
+		for _, student := range students {
+			if !validatedClassIds[student.ClassID] {
+				if webErr := ValidateClassExists(student); webErr != nil {
+					return webErr.Err
+				}
+				validatedClassIds[student.ClassID] = true
+			}
+			tx.Save(&student)
+			newIds = append(newIds, student.ID)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, &error2.WebError{
+			Err:  err,
+			Code: http.StatusBadRequest,
+		}
+	}
+
+	return newIds, nil
 }
