@@ -49,6 +49,16 @@ func NewRouter() *gin.Engine {
 			classGroup.PATCH("/:id", class.Update)
 			classGroup.DELETE("/:id", class.Delete)
 		}
+
+		studentGroup := api.Group("student")
+		{
+			var student controllers.StudentController
+			studentGroup.GET("/:id", student.GetById)
+			studentGroup.POST("", student.Create)
+			studentGroup.PATCH("/:id", student.Update)
+			studentGroup.DELETE("/:id", student.Delete)
+
+		}
 	}
 	return router
 }
