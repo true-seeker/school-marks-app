@@ -27,18 +27,15 @@ func ValidateClassExistingEntities(class Class) *error2.WebError {
 	var yearModel AcademicYear
 	var levelModel AcademicLevel
 
-	_, webErr := teacherModel.GetById(class.TeacherID)
-	if webErr != nil {
+	if _, webErr := teacherModel.GetById(class.TeacherID); webErr != nil {
 		return webErr
 	}
 
-	_, webErr = yearModel.GetById(class.YearID)
-	if webErr != nil {
+	if _, webErr := yearModel.GetById(class.YearID); webErr != nil {
 		return webErr
 	}
 
-	_, webErr = levelModel.GetById(class.LevelID)
-	if webErr != nil {
+	if _, webErr := levelModel.GetById(class.LevelID); webErr != nil {
 		return webErr
 	}
 	return nil
@@ -63,8 +60,7 @@ func (c Class) GetById(id uint) (*Class, *error2.WebError) {
 func (c Class) Create() (*Class, *error2.WebError) {
 	dbConnection := db.GetDB()
 
-	webErr := ValidateClassExistingEntities(c)
-	if webErr != nil {
+	if webErr := ValidateClassExistingEntities(c); webErr != nil {
 		return nil, webErr
 	}
 
@@ -80,8 +76,7 @@ func (c Class) Update() (*Class, *error2.WebError) {
 		return nil, webErr
 	}
 
-	webErr = ValidateClassExistingEntities(c)
-	if webErr != nil {
+	if webErr = ValidateClassExistingEntities(c); webErr != nil {
 		return nil, webErr
 	}
 

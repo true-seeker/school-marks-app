@@ -46,20 +46,6 @@ func (a AcademicYear) isExistsWithYear() bool {
 	return true
 }
 
-func (a AcademicYear) isExistsWithId() bool {
-	dbConnection := db.GetDB()
-
-	var academicYear AcademicYear
-
-	dbConnection.First(&academicYear, a.ID)
-
-	if academicYear.ID == 0 {
-		return false
-	}
-
-	return true
-}
-
 func (a AcademicYear) Create() (*AcademicYear, *error2.WebError) {
 	dbConnection := db.GetDB()
 

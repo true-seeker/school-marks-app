@@ -24,8 +24,7 @@ type Student struct {
 func ValidateStudentExistingEntities(student Student) *error2.WebError {
 	var classModel Class
 
-	_, webErr := classModel.GetById(student.ClassID)
-	if webErr != nil {
+	if _, webErr := classModel.GetById(student.ClassID); webErr != nil {
 		return webErr
 	}
 	return nil
@@ -50,8 +49,7 @@ func (s Student) GetById(id uint) (*Student, *error2.WebError) {
 func (s Student) Create() (*Student, *error2.WebError) {
 	dbConnection := db.GetDB()
 
-	webErr := ValidateStudentExistingEntities(s)
-	if webErr != nil {
+	if webErr := ValidateStudentExistingEntities(s); webErr != nil {
 		return nil, webErr
 	}
 
@@ -69,8 +67,7 @@ func (s Student) Update() (*Student, *error2.WebError) {
 		return nil, webErr
 	}
 
-	webErr = ValidateStudentExistingEntities(s)
-	if webErr != nil {
+	if webErr = ValidateStudentExistingEntities(s); webErr != nil {
 		return nil, webErr
 	}
 
