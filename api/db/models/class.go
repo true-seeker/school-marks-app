@@ -46,7 +46,7 @@ func (c Class) GetById(id uint) (*Class, *error2.WebError) {
 
 	var class Class
 
-	dbConnection.First(&class, id)
+	dbConnection.Preload(clause.Associations).Preload("SchoolClass.Level").First(&class, id)
 	if class.ID == 0 {
 		return nil, &error2.WebError{
 			Err:  errors.New(fmt.Sprintf("class with id %d does not exist", id)),
@@ -65,7 +65,7 @@ func (c Class) Create() (*Class, *error2.WebError) {
 	}
 
 	dbConnection.Create(&c)
-	dbConnection.Preload(clause.Associations).Find(&c)
+	dbConnection.Preload(clause.Associations).Preload("SchoolClass.Level").Find(&c)
 	return &c, nil
 }
 
@@ -86,7 +86,7 @@ func (c Class) Update() (*Class, *error2.WebError) {
 	dbConnection.Create(&c)
 	dbConnection.Model(&Student{}).Where("class_id = ?", c.ParentId).Update("class_id", c.ID)
 
-	dbConnection.Preload(clause.Associations).Find(&c)
+	dbConnection.Preload(clause.Associations).Preload("SchoolClass.Level").Find(&c)
 
 	return &c, nil
 }
