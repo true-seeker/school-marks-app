@@ -1,10 +1,13 @@
 package controllers
 
 import (
+	"encoding/csv"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	db2 "school-marks-app/api/db/models"
 	"school-marks-app/api/db/models/validators"
+	"strconv"
 )
 
 type ClassController struct{}
@@ -93,5 +96,70 @@ func (cl ClassController) Delete(c *gin.Context) {
 }
 
 func (cl ClassController) BulkCreate(c *gin.Context) {
+	var classModel db2.Class
+	var csvClasses []db2.Class
+	filePtr, err := c.FormFile("file")
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})
+		return
+	}
 
+	file, err := filePtr.Open()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})
+		return
+	}
+	defer file.Close()
+
+	records, err := csv.NewReader(file).ReadAll()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})
+		return
+	}
+
+	if len(records) == 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("Empty csv")})
+		return
+	}
+
+	if len(records[0]) != 3 || records[0][0] != "teacher_id" || records[0][1] != "year_id" ||
+		records[0][2] != "school_class_id" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("Wrong csv format")})
+		return
+	}
+
+	for rowId, line := range records[1:] {
+		teacherId, err := strconv.Atoi(line[0])
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("Field teacher_id must be integer on line %d", rowId+1)})
+			return
+		}
+		yaerId, err := strconv.Atoi(line[1])
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("Field year_id must be integer on line %d", rowId+1)})
+			return
+		}
+		schoolClassId, err := strconv.Atoi(line[2])
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("Field school_class_id must be integer on line %d", rowId+1)})
+			return
+		}
+
+		csvClass := db2.Class{
+			TeacherID:     uint(teacherId),
+			YearID:        uint(yaerId),
+			SchoolClassId: uint(schoolClassId),
+		}
+		if validationErr := validators.ValidateClassCreate(csvClass); validationErr != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": validationErr.Error() + fmt.Sprintf(" on line %d", rowId+1)})
+			return
+		}
+		csvClasses = append(csvClasses, csvClass)
+	}
+	newIds, webErr := classModel.BulkCreate(csvClasses)
+	if webErr != nil {
+		c.AbortWithStatusJSON(webErr.Code, gin.H{"message": webErr.Err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, newIds)
 }

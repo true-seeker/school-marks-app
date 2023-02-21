@@ -103,3 +103,35 @@ func (c Class) Delete(id uint) *error2.WebError {
 
 	return nil
 }
+
+func (c Class) BulkCreate(classes []Class) ([]uint, *error2.WebError) {
+	validateTeacherId := make(map[uint]bool)
+	validateYearId := make(map[uint]bool)
+	validateSchoolClassId := make(map[uint]bool)
+	var newIds []uint
+	dbConnection := db.GetDB()
+
+	err := dbConnection.Transaction(func(tx *gorm.DB) error {
+		for _, class := range classes {
+			if !validateTeacherId[class.TeacherID] || !validateYearId[class.YearID] || !validateSchoolClassId[class.SchoolClassId] {
+				if webErr := ValidateClassExistingEntities(class); webErr != nil {
+					return webErr.Err
+				}
+				validateTeacherId[class.TeacherID] = true
+				validateYearId[class.YearID] = true
+				validateSchoolClassId[class.SchoolClassId] = true
+			}
+			tx.Save(&class)
+			newIds = append(newIds, class.ID)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, &error2.WebError{
+			Err:  err,
+			Code: http.StatusBadRequest,
+		}
+	}
+
+	return newIds, nil
+}
