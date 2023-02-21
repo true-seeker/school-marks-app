@@ -130,13 +130,17 @@ func (s StudentController) BulkCreate(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("Field class_id must be integer on line %d", rowId+1)})
 			return
 		}
-
-		csvStudents = append(csvStudents, db.Student{
+		csvStudent := db.Student{
 			Name:       line[0],
 			Surname:    line[1],
 			Patronymic: line[2],
 			ClassID:    uint(classId),
-		})
+		}
+		if validationErr := validators.ValidateStudentCreate(csvStudent); validationErr != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": validationErr.Error() + fmt.Sprintf(" on line %d", rowId+1)})
+			return
+		}
+		csvStudents = append(csvStudents, csvStudent)
 	}
 	newIds, webErr := studentModel.BulkCreate(csvStudents)
 	if webErr != nil {
