@@ -15,6 +15,9 @@ func ValidateClassCreate(class db.Class) error {
 	if class.YearID == 0 {
 		return errors.New("field year_id is missing")
 	}
+	if class.Letter == "" {
+		return errors.New("field letter is missing")
+	}
 	return nil
 }
 

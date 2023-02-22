@@ -20,6 +20,7 @@ type Class struct {
 	SchoolClass   SchoolClass  `json:"school_class"`
 	YearID        uint         `json:"year_id"`
 	Year          AcademicYear `json:"year"`
+	Letter        string       `json:"letter"`
 }
 
 func ValidateClassExistingEntities(class Class) *error2.WebError {
