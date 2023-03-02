@@ -1,13 +1,13 @@
 {
   "database": {
-    "address": "localhost",
+    "address": "db",
     "user": "postgres",
     "password": "568219",
     "dbname": "golang",
     "port": "5432"
   },
   "server": {
-    "address": "localhost",
+    "address": "webapi",
     "port": "80"
   }
 }
