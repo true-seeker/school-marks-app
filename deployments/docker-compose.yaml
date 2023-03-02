@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  database:
+    image: postgres:latest
+    container_name: db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+  webapi:
+    image: webapi
+    build: ../
+    ports:
+      - "80:80"
+    depends_on:
+      database:
+        condition: service_healthy
+    command: ./school-marks-app
