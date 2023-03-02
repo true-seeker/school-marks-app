@@ -1,0 +1,13 @@
+{
+  "database": {
+    "address": "localhost",
+    "user": "postgres",
+    "password": "568219",
+    "dbname": "golang",
+    "port": "5432"
+  },
+  "server": {
+    "address": "localhost",
+    "port": "80"
+  }
+}
