@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm/clause"
 	"net/http"
 	"school-marks-app/api/db"
+	db2 "school-marks-app/api/db/dto"
 	error2 "school-marks-app/api/error"
 )
 
@@ -135,4 +136,79 @@ func (c Class) BulkCreate(classes []Class) ([]uint, *error2.WebError) {
 	}
 
 	return newIds, nil
+}
+
+func (c Class) Transfer(classTransferInput db2.ClassTransferInput) *error2.WebError {
+	dbConnection := db.GetDB()
+	var classStudents []Student
+	var classStudentIds, notTransferredStudentIds map[uint]bool
+	var studentModel Student
+	var academicYearModel AcademicYear
+	var schoolClassModel SchoolClass
+
+	if _, webErr := academicYearModel.GetById(classTransferInput.NewAcademicYearId); webErr != nil {
+		return webErr
+	}
+	if _, webErr := schoolClassModel.GetById(classTransferInput.NewSchoolClassId); webErr != nil {
+		return webErr
+	}
+
+	dbConnection.Where("class_id = ?", c.ID).Find(&classStudents)
+	for _, student := range classStudents {
+		classStudentIds[student.ID] = true
+	}
+
+	for _, id := range classTransferInput.NotTransferredStudentIds {
+		if _, webErr := studentModel.GetById(id); webErr != nil {
+			return webErr
+		}
+		if !classStudentIds[id] {
+			return &error2.WebError{
+				Err:  errors.New(fmt.Sprintf("Student with id %d does not exist in class", id)),
+				Code: http.StatusBadRequest,
+			}
+		}
+	}
+
+	for _, id := range classTransferInput.NewStudentIds {
+		if _, webErr := studentModel.GetById(id); webErr != nil {
+			return webErr
+		}
+		notTransferredStudentIds[id] = true
+	}
+
+	err := dbConnection.Transaction(func(tx *gorm.DB) error {
+		newClass := c
+		newClass.ID = 0
+		newClass.YearID = classTransferInput.NewAcademicYearId
+		newClass.SchoolClassId = classTransferInput.NewSchoolClassId
+		tx.Create(newClass)
+
+		for _, oldStudent := range classStudents {
+			if notTransferredStudentIds[oldStudent.ID] {
+				continue
+			}
+
+			newStudent := oldStudent
+			newStudent.ID = 0
+			tx.Delete(&oldStudent)
+			newStudent.ClassID = newClass.ID
+			tx.Save(newStudent)
+		}
+
+		for _, newStudentId := range classTransferInput.NewStudentIds {
+			var newStudent Student
+			tx.Find(&newStudent, newStudentId)
+			newStudent.ClassID = newClass.ID
+			tx.Save(newStudent)
+		}
+		return nil
+	})
+	if err != nil {
+		return &error2.WebError{
+			Err:  err,
+			Code: http.StatusBadRequest,
+		}
+	}
+	return nil
 }

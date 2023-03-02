@@ -4,7 +4,9 @@ import (
 	"encoding/csv"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"net/http"
+	db "school-marks-app/api/db/dto"
 	db2 "school-marks-app/api/db/models"
 	"school-marks-app/api/db/models/validators"
 	"strconv"
@@ -162,4 +164,26 @@ func (cl ClassController) BulkCreate(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, newIds)
+}
+
+func (cl ClassController) Transfer(c *gin.Context) {
+	var classTransferInput db.ClassTransferInput
+
+	id, err := validators.ValidateAndReturnId(c, c.Param("id"))
+	if err != nil {
+		return
+	}
+	class := db2.Class{
+		Model: gorm.Model{ID: id},
+	}
+
+	if validationErr := c.BindJSON(&classTransferInput); validationErr != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "application/json data is required"})
+		return
+	}
+
+	if webErr := class.Transfer(classTransferInput); webErr != nil {
+		c.AbortWithStatusJSON(webErr.Code, gin.H{"message": webErr.Err.Error()})
+		return
+	}
 }

@@ -49,6 +49,7 @@ func NewRouter() *gin.Engine {
 			classGroup.PATCH("/:id", class.Update)
 			classGroup.DELETE("/:id", class.Delete)
 			classGroup.POST("/bulkCreate", class.BulkCreate)
+			classGroup.POST("/:id/transfer", class.Transfer)
 		}
 
 		studentGroup := api.Group("student")
